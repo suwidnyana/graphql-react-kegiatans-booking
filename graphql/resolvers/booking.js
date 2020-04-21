@@ -14,7 +14,7 @@ bookings: async (args, req) => { //query
         throw new Error('Unauthenticated!')
     }
     try {
-        const bookings  = await Booking.find();
+        const bookings  = await Booking.find({user: req.userId});
         return bookings.map(booking => {
          return transformBooking(booking);
         });
@@ -22,8 +22,6 @@ bookings: async (args, req) => { //query
         throw err;
     }
 },
-
-  
 
 bookKegiatan: async (args,req) => { //mutations proses
     if(!req.isAuth) {
@@ -37,7 +35,7 @@ bookKegiatan: async (args,req) => { //mutations proses
     // })
 
     const booking = new Booking({
-        user: "5e823efabc06c476823e0244",
+        user: req.userId,
         event: fetchedEvent
     });
 

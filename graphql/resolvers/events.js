@@ -1,25 +1,24 @@
 const { dateToString } = require('../../helpers/date')
 const bcrypt = require("bcrypt")
+
+
 const Event = require("../../models/event")
 const User = require("../../models/user")
-
-const { transformEvent } = require("../resolvers/merge")
+const { transformEvent } = require("./merge")
 
 
 module.exports = {
 
     kegiatans : async () => {   //query  
-                
         //resolver 
-        const kegiatans = await Event.find()
-        
         try {
+            const kegiatans = await Event.find()
             return kegiatans.map(kegiatan => {
                 return transformEvent(kegiatan);
             });
         } catch(err) {
             throw err;
-            console.log(err);
+           
         }
     },
     
@@ -29,22 +28,19 @@ module.exports = {
         if(!req.isAuth) {
             throw new Error('Unauthenticated!');
         }
-        
     const event = new Event({
         
         judul : args.eventInput.judul,
         deskripsi : args.eventInput.deskripsi,
          harga : +args.eventInput.harga,
          date : new Date(args.eventInput.date),
-         creator : '5e7e978c6d40b64dd491212f'
+         creator : req.userId
     });
     let createdEvent;
-    const result = await  event
-    .save()
-        try {
-
+    try {
+        const result = await  event.save()
         createdEvent = transformEvent(result);
-        const creator = await  User.findById('5e7e978c6d40b64dd491212f')
+        const creator = await User.findById(req.userId)
         console.log(result)
     
     

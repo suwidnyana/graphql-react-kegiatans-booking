@@ -3,12 +3,15 @@ const Event = require("../../models/event")
 const User = require("../../models/user")
 
 const jwt = require('jsonwebtoken')
+
+
 module.exports = {
 
 buatUser: async args => {  //mutation proses
-
-    try {
-   const user_sudah_ada = await User.findOne({
+    try 
+    
+    {
+        const user_sudah_ada = await User.findOne({
         email: args.userInput.email,
     })
    
@@ -27,7 +30,8 @@ buatUser: async args => {  //mutation proses
         console.log(result)
 
         return {...result._doc, 
-            password: null
+            password: null,
+            _id: result.id 
         };
     }
     catch(err) {

@@ -12,7 +12,7 @@ type Booking {
 }
 
 type kegiatan {
-    _id: ID!
+        _id: ID!
      judul : String!
      deskripsi : String!
      harga : Float!

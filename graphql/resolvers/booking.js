@@ -30,10 +30,6 @@ bookKegiatan: async (args,req) => { //mutations proses
    
     const fetchedEvent = await Event.findOne({ _id: args.eventId  });
     
-    // const user_sudah_ada = await User.findOne({
-    //     _id: args.eventId,
-    // })
-
     const booking = new Booking({
         user: req.userId,
         event: fetchedEvent
@@ -52,11 +48,6 @@ cancelBooking: async (args,req) => {
     }
     try {
         const booking =  await Booking.findById(args.bookingId).populate('event');
-        // const event = {
-        //     ...booking.event._doc,
-        //     _id: booking.event.id,
-        //     creator: user.bind(this, booking.event._doc.creator)
-        // };
         const event = transformEvent(booking.event);
         await Booking.deleteOne({ _id : args.bookingId });
         return event;

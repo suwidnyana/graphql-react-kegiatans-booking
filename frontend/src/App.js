@@ -12,7 +12,6 @@ import MainNavigation from '../src/components/Navigation/MainNavigation'
 import AuthContext from './context/auth-context';
 
 
-
 class App extends Component {
 
   

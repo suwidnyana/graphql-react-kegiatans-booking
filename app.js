@@ -19,21 +19,6 @@ app.use(bodyParser.json());
 app.use(cors());
 
 
-
-// app.listen(3000)
-
-// app.listen(port, () => {
-//     console.log(`Server berjalan pada port ${port}`);
-// })
-
-
-
-// app.get('/', (request, response, next) => {
-//     response.send('Hallo Dunia Apel');
-// })
-
-
-
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
@@ -55,23 +40,6 @@ app.use('/graphql',
 }));
 
 
-// mongoose
-//     .connect(
-//     `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@graphql-react-event-booking-exuzg.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`,{ useNewUrlParser: true, useUnifiedTopology: true  }
-// )
-
-
-
-// .then(() => {
-//     app.listen(port, () => {
-//         console.log(`Server berjalan pada port ${port}`);
-//     })
-    
-// }).catch(err => {
-//     console.log(err);
-// })
-
-
 
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true
@@ -79,11 +47,7 @@ mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true
 
 const connection = mongoose.connection;
 
-// connection.once('open',  () => {
-//     console.log("MongoDB database koneksi berhasil");
-//     console.log(`Server berjalan di port: ${port}`);
-   
-// })
+
 
 app.listen(port, () => {
     console.log(`Server berjalan di port: ${port}`);

@@ -2,8 +2,6 @@ const moongose = require('mongoose')
 
 const Schema = moongose.Schema;
 
-
-
 const userSchema = new Schema({
     email : {
         type: String,

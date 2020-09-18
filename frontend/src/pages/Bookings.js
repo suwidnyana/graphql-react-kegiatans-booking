@@ -1,73 +1,89 @@
-import React, { Component } from 'react'
-import AuthContext from '../context/auth-context'
+import React, {useState, useEffect, useContext } from 'react'
 import Spinner from '../components/Spinner/Spinner';
 import BookingList from '../components/Bookings/BookingList/BookingList'
 import BookingChart from '../components/Bookings/BookingChart/BookingChart'
 import BookingsControls from '../components/Bookings/BookingsControls/BookingsControls'
 
-class Bookings extends Component {
+import {AuthContext} from '../context/auth-context';
 
-    state = {
+
+const Bookings = () => {
+
+  const [isLoading, setLoading] = useState(false)
+  const [bookings, setBookings] = useState([])
+  const [outPutType, setOutPutType] = useState('list')
+  const context = useContext(AuthContext)
+  
+    // state = {
     
-        isLoading: false,
-        bookings: [],
-        outputType: 'list'
-      };
+    //     isLoading: false,
+    //     bookings: [],
+    //     outputType: 'list'
+    //   };
 
-      static contextType = AuthContext;
+      // static contextType = AuthContext;
 
-      componentDidMount() {
-        this.fetchBookings();
-      }
 
-      fetchBookings = () => {
-        this.setState({ isLoading: true });
-        const requestBody = {
-          
-          query: `
-              query {
-                bookings {
+      // componentDidMount() {
+      //   this.fetchBookings();
+      // }
+
+      
+     
+    const fetchBookings = () => {
+      setLoading(true)
+      const requestBody = {
+        
+        query: `
+            query {
+              bookings {
+                  _id
+                  createdAt
+                  event {
                     _id
-                    createdAt
-                    event {
-                      _id
-                      judul
-                      date
-                      harga
-                    }
-                }
+                    judul
+                    date
+                    harga
+                  }
               }
-            `
-        };
-    
-       
-    
-        fetch('http://localhost:8000/graphql', {
-          method: 'POST',
-          body: JSON.stringify(requestBody),
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.context.token
-          }
-        })
-          .then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-              throw new Error('Failed!');
             }
-            return res.json();
-          })
-          .then(resData => {
-            const bookings = resData.data.bookings;
-        this.setState({ bookings: bookings, isLoading: false });
-           
-            console.log(resData) 
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }
+          `
+      };
+  
+     
+  
+      fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + context.token
+        }
+      })
+        .then(res => {
+          if (res.status !== 200 && res.status !== 201) {
+            throw new Error('Failed!');
+          }
+          return res.json();
+        })
+        .then(resData => {
+          const bookings = resData.data.bookings;
+      // this.setState({ bookings: bookings, isLoading: false });
+         setBookings(bookings)
+         setLoading(false)
+          console.log(resData) 
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
 
-      deleteBookingHandler = (bookingId) => {
+    useEffect(() => {
+      fetchBookings();
+      
+      }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+      const  deleteBookingHandler = (bookingId) => {
         this.setState({ isLoading: true });
         const requestBody = {
           query: `
@@ -85,7 +101,7 @@ class Bookings extends Component {
           body: JSON.stringify(requestBody),
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.context.token
+            Authorization: 'Bearer ' + context.token
           }
         })
           .then(res => {
@@ -109,56 +125,58 @@ class Bookings extends Component {
       }
       
 
-      changeOutputTypeHandler = (outputType) => {
+      const  changeOutputTypeHandler = (outputType) => {
         if(outputType === 'list')
         {
-          this.setState({outputType: 'list'});
+          // this.setState({outputType: 'list'});
+          setOutPutType('list')
         } else 
         {
-          this.setState({outputType: 'chart'});
+          // this.setState({outputType: 'chart'});
+          setOutPutType('chart')
         }
       }
 
 
-    render()
-    {
-      let content = <Spinner/>
-      if(!this.state.isLoading) {  
-        content = (
-          <>
-              <BookingsControls
-                activeOutputType={this.state.outputType}
-                onChange={this.changeOutputTypeHandler}
-              />
-
-              <div>
-                {this.state.outputType === 'list' 
-                ? 
-                (
-                <BookingList
-                  bookings={this.state.bookings}
-                  onDelete={this.deleteBookingHandler}
-                />
-                ) : (
-               <BookingChart
-                bookings={this.state.bookings}
-               />
-                )}
-              </div>
-          </>
-        );
-
-      }
-
+    
+    
         return (
-        
           <>
-             {content}
+             <ul>
+               {
+                 isLoading 
+                 ?
+                 <Spinner /> :
+                <>
+                <BookingsControls
+                      activeOutputType={outPutType}
+                      onChange={changeOutputTypeHandler}
+                    />
+
+                    <div>
+                      {outPutType === 'list' 
+                      ? 
+                      (
+                      <BookingList
+                        bookings={bookings}
+                        onDelete={deleteBookingHandler}
+                      />
+                      ) : (
+                    <BookingChart
+                      bookings={bookings}
+                    />
+                      )}
+                    </div>
+                </>
+                
+                }
+             </ul>
+            
            </>
 
         );
     }
-}
+
 
 
 export default Bookings;

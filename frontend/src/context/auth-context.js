@@ -1,8 +1,38 @@
-import React from 'react'
+import React,{createContext,useState} from 'react'
 
-export default React.createContext({
-    token: null,
-    userId: null,
-    login: (token, userId, tokenExpiration) => {},
-    logout: () => {}
-})
+export const AuthContext = createContext()
+
+
+
+
+export default function AuthContextProvider ({children}) {
+    const [state, setState] = useState({
+        token: null,
+        userId: null,
+        email: null
+      })
+    
+    
+    
+      const getLogin =  (token, userId, email) => {
+       setState({token:token, userId:userId, email:email})
+    };
+    
+    const getLogout =  () => {
+        setState({token:null, userId:null, email:null})
+    };
+    
+    return (
+        <AuthContext.Provider value={
+            {
+              token: state.token,
+              userId: state.userId,
+              email: state.email,
+              login:getLogin,
+              logout:getLogout
+            }
+          }>
+            {children}
+          </AuthContext.Provider>
+    )
+}

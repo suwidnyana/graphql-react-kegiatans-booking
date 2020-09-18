@@ -42,7 +42,8 @@ app.use('/graphql',
 
 
 const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true
+mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, 
+  useUnifiedTopology: true
 });
 
 const connection = mongoose.connection;
@@ -52,6 +53,7 @@ const connection = mongoose.connection;
 app.listen(port, () => {
     console.log(`Server berjalan di port: ${port}`);
     connection.once('open',  () => {
+     
         console.log(`MongoDB database koneksi berhasil berjalan di port: ${port}`);
     })
 })

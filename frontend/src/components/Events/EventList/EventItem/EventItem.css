@@ -1,7 +1,7 @@
 .events__list-item {
     margin: 1rem 0;
     padding: 1rem;
-    border: 2.5px solid #5101d1;
+    border: 1px solid #5101d1;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -21,6 +21,4 @@
 
    .events__list-item p{
     margin: 0;
-    
-   
    }

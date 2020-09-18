@@ -8,10 +8,10 @@ Choose the right branch in this repository to get the code for the different par
 
 Install all dependencies
 ```sh
-npm install
+yarn install
 ```
 
 Run the server
 ```sh
-npm start
+nodemon app.js
 ```

@@ -20,9 +20,11 @@
     "graphql": "^14.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.6",
-    "nodemon": "^2.0.2",
     "react": "^16.13.1",
     "react-chartjs": "^1.2.0",
     "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.5"
   }
 }

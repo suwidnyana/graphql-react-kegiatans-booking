@@ -7,8 +7,6 @@ const DataLoader = require('dataloader');
 const eventLoader = new DataLoader((kegiatanIds) => {
     return events(kegiatanIds);
   });
-  
-
 
   const userLoader = new DataLoader(userIds => {
     return User.find({_id: {$in: userIds}});

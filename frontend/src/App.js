@@ -32,7 +32,6 @@ const App = () => {
                   {!token && <Redirect from='/bookings' to='/events' exact/>}
               </Switch>
             </main>
-         
         </>
       </BrowserRouter>
     );

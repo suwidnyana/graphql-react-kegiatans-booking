@@ -26,7 +26,7 @@ const App = () => {
                 <Switch>
                   <Route path='/' component={AuthPage} exact/>
                   {token && <Redirect from='/auth' to='/bookings' exact/>}
-                  {!token && <Route path='/auth' component={AuthPage}/> }
+                  <Route path='/auth' component={AuthPage}/>
                   <Route path='/events' component={EventsPage}/>
                   {token && <Route path='/bookings' component={BookingsPage}/>}
                   {!token && <Redirect from='/bookings' to='/events' exact/>}

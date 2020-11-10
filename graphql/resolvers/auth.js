@@ -63,6 +63,41 @@ login: async ({email, password}) => {
         token: token,
         tokenExpiration: 1
     }
+},
+
+
+auth: async ({token}) => {
+    
+    // const user = await User.findOne({email: email});
+    // if(!user) {
+    //     throw new Error('User tidak ada! ');
+    // }
+
+    // const sama = await bcrypt.compare(password, user.password);
+    // if(!sama) {
+    //     throw new Error('Password salah atau tidak sama!');
+    // } 
+
+  
+
+    try {
+        var user = jwt.verify(token, 'somesupersecretkey');
+
+        return {
+            authenticated: true,
+            userId: user.userId,
+            email: user.email
+        }
+      } catch(err) {
+        // err
+        return {
+            authenticated: false,
+            email: null,
+            userId: null
+        }
+      }
+    
+   
 }
 
 };

@@ -34,6 +34,12 @@ type AuthData {
     tokenExpiration: Int!
 }
 
+type AuthUser {
+    userId: ID!
+    email: String!
+    authenticated: Boolean!
+}
+
 input EventInput {
      judul : String!
      deskripsi : String!
@@ -52,6 +58,7 @@ type RootQuery {
         kegiatans: [kegiatan!]!
         bookings: [Booking!]!
         login(email: String!, password: String!):  AuthData!
+        auth(token: String!): AuthUser!
     }
 
 type RootMutation {

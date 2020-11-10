@@ -9,6 +9,9 @@ import {AuthContext} from '../context/auth-context'
 import EventList from '../components/Events/EventList/EventList'
 import Spinner from '../components/Spinner/Spinner';
 
+import withAuth from './withAuth';
+
+
 const Events = () =>  {
    
   const context = useContext(AuthContext);
@@ -314,4 +317,4 @@ const Events = () =>  {
         }
 
       //}
-export default Events;
+export default withAuth(Events);

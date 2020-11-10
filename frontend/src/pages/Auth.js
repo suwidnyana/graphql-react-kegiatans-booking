@@ -18,26 +18,6 @@ const AuthPage = () => {
   }
 
 
-    // state = {
-    //     isLogin: true
-    //   };
-    
-   
-
-    // constructor(props) {
-    //     super(props)
-    //     this.emailEl = React.createRef();
-    //     this.passwordEl = React.createRef();
-
-    // }
-
-    //  const switchModeHandler = () => {
-    //    setLogin(prevState => {
-    //       return { isLogin: !prevState.isLogin };
-    //     }); 
-    //   };
-
-
     const submitHandler = event => {
       event.preventDefault();
       const email = emailEl.current.value;

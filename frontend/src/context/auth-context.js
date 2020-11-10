@@ -8,9 +8,7 @@ export default function AuthContextProvider ({children}) {
         userId: null,
         email: null
       })
-    
-    
-    
+
       const getLogin =  (token, userId, email) => {
        setState({token:token, userId:userId, email:email})
        localStorage.setItem("token", token)
@@ -20,6 +18,10 @@ export default function AuthContextProvider ({children}) {
         setState({token:null, userId:null, email:null})
         localStorage.clear()
     };
+
+    const setAuth = (token, userId, email) => {
+      setState({token:token, userId:userId, email:email}) 
+    }
     
     return (
         <AuthContext.Provider value={
@@ -28,7 +30,8 @@ export default function AuthContextProvider ({children}) {
               userId: state.userId,
               email: state.email,
               login:getLogin,
-              logout:getLogout
+              logout:getLogout,
+              auth: setAuth
             }
           }>
             {children}

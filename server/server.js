@@ -7,7 +7,12 @@ const isAuth = require('./middleware/is-auth')
 const graphQlSchema = require('./graphql/schema/index')
 const graphQlResolver = require('./graphql/resolvers/index')
 
-require('dotenv').config();
+//connect Database
+const dotenv = require('dotenv')
+
+dotenv.config({path: './config/config.env'})
+const connectDB = require('./config/db');
+connectDB();
 
 
 
@@ -28,6 +33,8 @@ app.use((req, res, next) => {
   });
 app.use(isAuth);
 
+
+
 // ----------------------------------
 // API Routes
 // ----------------------------------
@@ -40,13 +47,10 @@ app.use('/graphql',
 
 
 
-//connect Database
-const connectDB = require('./config/db');
-connectDB();
 
 // ----------------------------------
 // Express server
 // ----------------------------------
-const port = process.env.PORT || 8000
+const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Server started on port ${port}`));
 

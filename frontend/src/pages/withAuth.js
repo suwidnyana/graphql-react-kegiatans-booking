@@ -1,21 +1,18 @@
-import React, {useContext,useEffect} from 'react'
+import React, {useContext} from 'react'
 import {AuthContext} from '../context/auth-context'
 import {Redirect} from 'react-router-dom'
 
-
 const withAuth = ( Component ) => {
    
-   
-  
     return function New(props) {
-        const {auth, token} = useContext(AuthContext)
+       
+      const {auth, token} = useContext(AuthContext)
         const tokenStorage = localStorage.getItem("token")
        
-
-    
-if(!tokenStorage) {
+        if(!tokenStorage) {
             return <Redirect  to='/auth'/>
          }
+
         let requestBody = {
             query: `
               query auth($token: String!) {

@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, Suspense} from 'react';
 
 import './App.css';
 
@@ -16,9 +16,8 @@ const App = () => {
 
   const { token } = useContext(AuthContext);
 
-  
-  
     return (
+      <Suspense>
       <BrowserRouter>
         <>
             <MainNavigation />
@@ -34,6 +33,7 @@ const App = () => {
             </main>
         </>
       </BrowserRouter>
+      </Suspense>
     );
   
 }

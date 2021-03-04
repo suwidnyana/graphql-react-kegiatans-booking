@@ -28,8 +28,7 @@ const Events = () =>  {
     
  
 
-  const fetchEvents = async () => {
-      
+  const fetchEvents = async () => { 
         try {
           setIsLoading(true)      
           const requestBody = {
@@ -54,13 +53,13 @@ const Events = () =>  {
             body: JSON.stringify(requestBody),
             headers: {
               'Content-Type': 'application/json',
-             
             }
           })
   
           if (request.status !== 200 && request.status !== 201) {
             throw new Error('Failed!')
           }
+          
           const response = await request.json()
           console.log(response)
           setKegiatans(response.data.kegiatans)
@@ -71,9 +70,9 @@ const Events = () =>  {
       }
     }
       
-      const startCreateEventHandler = () => {
+  const startCreateEventHandler = () => {
        setCreating(true);
-      };
+    };
     
       const modalConfirmHandler = async () => {
 

@@ -29,7 +29,7 @@ const withAuth = ( Component ) => {
             }
           };
 
-          fetch('http://localhost:8000/graphql', {
+          fetch(`${process.env.REACT_APP_API}`, {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {

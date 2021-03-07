@@ -1,4 +1,6 @@
 import React, {useContext,useState, useEffect, createRef} from 'react'
+import { useQuery,gql } from '@apollo/client';
+
 import './Events.css';
 
 import Modal from '../components/Modal/Modal'
@@ -12,8 +14,26 @@ import Spinner from '../components/Spinner/Spinner';
 import withAuth from './withAuth';
 
 
+const getEventsQuery = gql`
+  {
+    kegiatans {
+      _id
+      judul
+      deskripsi
+      date
+      harga
+      creator {
+        _id
+        email
+      }
+    }
+  }
+  `
+
 const Events = () =>  {
-   
+  
+  const { loading, data, error } = useQuery(getEventsQuery)
+
   const context = useContext(AuthContext);
 
   const [creating, setCreating] = useState(false);
@@ -25,8 +45,8 @@ const Events = () =>  {
   const priceEl = createRef()
   const dateEl = createRef()
   const descriptionEl = createRef()
-    
- 
+
+
 
   const fetchEvents = async () => { 
         try {
@@ -48,7 +68,7 @@ const Events = () =>  {
                 }
               `
           }
-         const request = await fetch('http://localhost:8000/graphql', {
+         const request = await fetch(`${process.env.REACT_APP_API}`, {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
@@ -171,10 +191,7 @@ const Events = () =>  {
      setselectedEvent(currentEvent)
     }
 
-    
-    
-
-      const bookEventHandler = () => {
+    const bookEventHandler = () => {
         if(!context.token) {
           // this.setState({selectedEvent: null})
           setselectedEvent(null)
@@ -217,7 +234,7 @@ const Events = () =>  {
           .catch(err => {
             console.log(err);
           });
-      }
+    }
   
       // componentWillUnmount() {
       //   this.isActive = false;
@@ -225,8 +242,19 @@ const Events = () =>  {
 
     
       useEffect(() => {
-        fetchEvents();
-      },[]);
+        if (!!data) {
+          const evenstData = data.kegiatans.map((event, key) => {
+            return {
+              key,
+              ...event,
+            }
+          })
+          console.log(evenstData)
+    
+          setKegiatans(evenstData)
+         
+        }
+      }, [data]);
 
             return (
            

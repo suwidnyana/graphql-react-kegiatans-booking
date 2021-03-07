@@ -8,7 +8,6 @@ const { transformEvent } = require("./merge")
 
 
 module.exports = {
-
     kegiatans : async () => {   //query  
         //resolver 
         try {

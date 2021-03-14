@@ -13,9 +13,13 @@ import { AuthContext } from './context/auth-context';
 
 
 const App = () => {
+  const context = useContext(AuthContext)
 
   const client = new ApolloClient({
     uri: `${process.env.REACT_APP_API}`,
+    headers: {
+      Authorization: 'Bearer ' + context.token
+    },
     cache: new InMemoryCache()
   })
 

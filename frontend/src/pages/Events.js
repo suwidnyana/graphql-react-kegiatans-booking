@@ -1,5 +1,5 @@
 import React, {useContext,useState, useEffect, createRef} from 'react'
-import { useQuery,gql } from '@apollo/client';
+import { useQuery, gql, useMutation } from '@apollo/client';
 
 import './Events.css';
 
@@ -13,31 +13,17 @@ import Spinner from '../components/Spinner/Spinner';
 
 import withAuth from './withAuth';
 
+import {getEventsQuery, addEventMutation} from '../queries/index'
 
-const getEventsQuery = gql`
-  {
-    kegiatans {
-      _id
-      judul
-      deskripsi
-      date
-      harga
-      creator {
-        _id
-        email
-      }
-    }
-  }
-  `
+
 
 const Events = () =>  {
   
-  const { loading, data, error } = useQuery(getEventsQuery)
 
   const context = useContext(AuthContext);
 
   const [creating, setCreating] = useState(false);
-  const [kegiatans,setKegiatans] = useState([])
+  const [kegiatans,setKegiatans] =  useState([])
   const [isLoading,setIsLoading] = useState(false)
   const [selectedEvent,setselectedEvent] = useState(null)
 
@@ -46,55 +32,85 @@ const Events = () =>  {
   const dateEl = createRef()
   const descriptionEl = createRef()
 
+  const { data } = useQuery(getEventsQuery)
+
+  const [addbook, { datas }] = useMutation(addEventMutation);
+
+  useEffect(() => {
+   events()
+  }, [data]);
 
 
-  const fetchEvents = async () => { 
-        try {
-          setIsLoading(true)      
-          const requestBody = {
-            query: `
-                query {
-                  kegiatans {
-                    _id
-                    judul
-                    deskripsi
-                    date
-                    harga
-                    creator {
-                      _id
-                      email
-                    }
-                  }
-                }
-              `
-          }
-         const request = await fetch(`${process.env.REACT_APP_API}`, {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          })
+
+const events = async () => {
+  try {
+    setIsLoading(true) 
+      
+    if (!!data) {
+      const response = data.kegiatans.map((event, key) => {
+        return {
+          key,
+          ...event,
+        }
+      })
+      console.log(response)
   
-          if (request.status !== 200 && request.status !== 201) {
-            throw new Error('Failed!')
-          }
-          
-          const response = await request.json()
-          console.log(response)
-          setKegiatans(response.data.kegiatans)
-          setIsLoading(false)
-         
-        }catch(err){
-          setIsLoading(false) 
-      }
+      setKegiatans(response)
+      setIsLoading(false)
+     
     }
+  } catch (error) {
+    setIsLoading(false) 
+  }
+  
+}
+
+
+  // const fetchEvents = async () => { 
+  //       try {
+  //         setIsLoading(true)      
+  //         const requestBody = {
+  //           query: `
+  //               query {
+  //                 kegiatans {
+  //                   _id
+  //                   judul
+  //                   deskripsi
+  //                   date
+  //                   harga
+  //                   creator {
+  //                     _id
+  //                     email
+  //                   }
+  //                 }
+  //               }
+  //             `
+  //         }
+  //        const request = await fetch(`${process.env.REACT_APP_API}`, {
+  //           method: 'POST',
+  //           body: JSON.stringify(requestBody),
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           }
+  //         })
+  
+         
+          
+  //         const response = await request.json()
+  //         console.log(response)
+  //         setKegiatans(response.data.kegiatans)
+  //         setIsLoading(false)
+         
+  //       }catch(err){
+  //         setIsLoading(false) 
+  //     }
+  //   }
       
   const startCreateEventHandler = () => {
        setCreating(true);
     };
     
-      const modalConfirmHandler = async () => {
+  const modalConfirmHandler = async () => {
 
         try {
           setCreating(false);
@@ -102,8 +118,6 @@ const Events = () =>  {
           const harga = +priceEl.current.value;
           const date = dateEl.current.value;
           const deskripsi = descriptionEl.current.value;
-
-          
     
           if (
             judul.trim().length === 0 ||
@@ -117,71 +131,63 @@ const Events = () =>  {
           const event = { judul, harga, date, deskripsi };
           console.log(event);
       
-          const requestBody = {
-            query: `
-                mutation {
-                  buatEvent(eventInput: {judul: "${judul}", deskripsi: "${deskripsi}", harga: ${harga}, date: "${date}"}) {
-                    _id
-                    judul
-                    deskripsi
-                    date
-                    harga
-                    creator {
-                      _id
-                      email
-                    }
-                  }
-                }
-              `
-          };
-      
-          const token = context.token;
-      
-          const request = await fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + token
-            }
-          })
-            .then(res => {
-              if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed!');
-              }
-              return res.json();
-            })
 
-            // .then(resData => {
-            //   // this.fetchEvents();
-            //   // console.log(resData)
-            //   this.setState(stateSebelumnya => {
-            //     const updateEvents = [...stateSebelumnya.kegiatans];
-            //     updateEvents.push({
-            //         _id : resData.data.buatEvent._id,
-            //         judul: resData.data.buatEvent.judul,
-            //         deskripsi: resData.data.buatEvent.deskripsi,
-            //         date: resData.data.buatEvent.date,
-            //         harga: resData.data.buatEvent.harga,
-            //         creator: {
-            //           _id: this.context.userId
-            //         }
-            //     });
-            //     return {kegiatans: updateEvents};
-            //   })
-            // })
-            // .catch(err => {
-            //   console.log(err);
-            // });
+          addbook({
+            variables: {
+                // judul: book.judul,
+                // genre: this.state.genre,
+                // authorId: this.state.authorI
+                ...kegiatans
+            },
+            refetchQueries: [{ query: getEventsQuery }]
+            
+        });
+        console.log(datas)
+          
+        
+        // const requestBody = {
+        //     query: `
+        //         mutation {
+        //           buatEvent(eventInput: {judul: "${judul}", deskripsi: "${deskripsi}", harga: ${harga}, date: "${date}"}) {
+        //             _id
+        //             judul
+        //             deskripsi
+        //             date
+        //             harga
+        //             creator {
+        //               _id
+        //               email
+        //             }
+        //           }
+        //         }
+        //       `
+        //   };
+      
+        //   const token = context.token;
+      
+        //   const request = await fetch(`${process.env.REACT_APP_API}`, {
+        //     method: 'POST',
+        //     body: JSON.stringify(requestBody),
+        //     headers: {
+        //       'Content-Type': 'application/json',
+        //       Authorization: 'Bearer ' + token
+        //     }
+        //   })
+        //     .then(res => {
+        //       if (res.status !== 200 && res.status !== 201) {
+        //         throw new Error('Failed!');
+        //       }
+        //       return res.json();
+        //     })
 
-            const response  = await request.json()
-            setKegiatans(prevEvents=>[...prevEvents, response.data.buatEvent])
+        //     const response  = await request.json()
+        //     setKegiatans(prevEvents=>[...prevEvents, response.data.buatEvent])
         }catch(err)
         { console.log(err)}
        
       };
 
-      const modalCancelHandler = () => {
+    const modalCancelHandler = () => {
         setCreating(false)
         setselectedEvent(null)
       };
@@ -212,7 +218,7 @@ const Events = () =>  {
             }
         };
     
-        fetch('http://localhost:8000/graphql', {
+        fetch(`${process.env.REACT_APP_API}`, {
           method: 'POST',
           body: JSON.stringify(requestBody),
           headers: {
@@ -241,20 +247,9 @@ const Events = () =>  {
       // }
 
     
-      useEffect(() => {
-        if (!!data) {
-          const evenstData = data.kegiatans.map((event, key) => {
-            return {
-              key,
-              ...event,
-            }
-          })
-          console.log(evenstData)
     
-          setKegiatans(evenstData)
-         
-        }
-      }, [data]);
+
+
 
             return (
            
@@ -269,31 +264,31 @@ const Events = () =>  {
                  onConfirm={modalConfirmHandler}
                  ConfirmText="Confirm"
                >
-                   <form>
-           <div className="form-control">
-             <label htmlFor="title">Title</label>
-             <input type="text" id="title" ref={titleEl} />
-           </div>
-           <div className="form-control">
-             <label htmlFor="price">Price</label>
-             <input type="number" id="price" ref={priceEl} />
-           </div>
-           <div className="form-control">
-             <label htmlFor="date">Date</label>
-             {/* <input type="datetime-local" id="date" ref={this.dateElRef} /> */}
-             <input type="date" id="date" ref={dateEl} />
+                <form>
+                    <div className="form-control">
+                      <label htmlFor="title">Title</label>
+                      <input type="text" id="title" ref={titleEl} />
+                    </div>
+                    <div className="form-control">
+                      <label htmlFor="price">Price</label>
+                      <input type="number" id="price" ref={priceEl} />
+                    </div>
+                    <div className="form-control">
+                      <label htmlFor="date">Date</label>
+                      {/* <input type="datetime-local" id="date" ref={this.dateElRef} /> */}
+                      <input type="date" id="date" ref={dateEl} />
 
-           </div>
-           <div className="form-control">
-             <label htmlFor="description">Description</label>
-             <textarea
-               id="description"
-               rows="4"
-               ref={descriptionEl}
-             />
-           </div>
-         </form>
-       </Modal>
+                    </div>
+                    <div className="form-control">
+                      <label htmlFor="description">Description</label>
+                      <textarea
+                        id="description"
+                        rows="4"
+                        ref={descriptionEl}
+                      />
+                    </div>
+              </form>
+            </Modal>
              )}
 
              {selectedEvent && (

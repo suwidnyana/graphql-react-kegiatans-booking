@@ -62,6 +62,7 @@ type RootQuery {
     }
 
 type RootMutation {
+   
     buatEvent(eventInput: EventInput): kegiatan
     buatUser(userInput: UserInput): User
     
@@ -74,7 +75,8 @@ type RootMutation {
     }
 
 schema {
-query: RootQuery
-mutation : RootMutation
-}
+    query: RootQuery
+    mutation : RootMutation
+    }
+
 `);

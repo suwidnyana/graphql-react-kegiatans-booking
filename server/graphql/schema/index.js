@@ -1,18 +1,10 @@
-const { buildSchema } = require('graphql')
 
-module.exports = buildSchema(`
-                
+const { gql} = require('apollo-server')
 
-type Booking {
+module.exports = gql`
+
+type Kegiatan {
     _id: ID!
-    event : kegiatan!
-    user: User!
-    createdAt : String!
-    updatedAt : String!
-}
-
-type kegiatan {
-        _id: ID!
      judul : String!
      deskripsi : String!
      harga : Float!
@@ -21,11 +13,20 @@ type kegiatan {
 
 }
 
+type Booking {
+    _id: ID!
+    event : [Kegiatan]!
+    user: [User]!
+    createdAt : String!
+    updatedAt : String!
+}
+
+
 type User {
     _id: ID!
     email: String!
     password: String
-    createdEvents : [kegiatan!]
+    createdEvents : [Kegiatan]!
 }
 
 type AuthData {
@@ -54,29 +55,22 @@ input UserInput {
 
 
 
-type RootQuery {
-        kegiatans: [kegiatan!]!
-        bookings: [Booking!]!
-        login(email: String!, password: String!):  AuthData!
-        auth(token: String!): AuthUser!
+type Query {
+        kegiatans: [Kegiatan]
+        bookings: [Booking]
+        login(email: String!, password: String!):  AuthData
+        auth(token: String!): AuthUser
     }
 
-type RootMutation {
-   
-    buatEvent(eventInput: EventInput): kegiatan
-    buatUser(userInput: UserInput): User
+type Mutation {
+    buatUser(userInput: UserInput): User!
+
+    buatEvent(eventInput: EventInput): Kegiatan!
     
     bookKegiatan(eventId: ID!): Booking!
     
-    cancelBooking(bookingId: ID!): kegiatan!
-
-   
-
+    cancelBooking(bookingId: ID!): Kegiatan!
     }
 
-schema {
-    query: RootQuery
-    mutation : RootMutation
-    }
 
-`);
+`;

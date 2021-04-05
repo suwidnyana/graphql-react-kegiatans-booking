@@ -5,9 +5,15 @@ const graphqlHttp = require('express-graphql')
 const app = express()
 const isAuth = require('./middleware/is-auth')
 
+
+const { ApolloServer } = require('apollo-server');
+
+
+
+
 //grapqhl
-const graphQlSchema = require('./graphql/schema/index')
-const graphQlResolver = require('./graphql/resolvers/index')
+const typeDefs  = require('./graphql/schema/index')
+const resolvers = require('./graphql/resolvers/index')
 
 //connect Database
 const dotenv = require('dotenv')
@@ -37,15 +43,22 @@ app.use(isAuth);
 
 
 
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  playground: true
+  
+});
+
 // ----------------------------------
 // API Routes
 // ----------------------------------
-app.use('/graphql', 
-           graphqlHttp({
-            schema: graphQlSchema,
-            rootValue: graphQlResolver, 
-            graphiql: true
-}));
+// app.use('/graphql', 
+//            graphqlHttp({
+//             schema: graphQlSchema,
+//             rootValue: graphQlResolver, 
+//             graphiql: true
+// }));
 
 
 
@@ -54,5 +67,9 @@ app.use('/graphql',
 // Express server
 // ----------------------------------
 const port = process.env.PORT || 5000
-app.listen(port, () => console.log(`Server started on port ${port}`));
+
+server.listen(port, () => 
+console.log(`Server started on port ${port}`));
+
+
 

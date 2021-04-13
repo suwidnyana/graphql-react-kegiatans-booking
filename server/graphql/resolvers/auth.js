@@ -30,7 +30,8 @@ Mutation:{
             const result = await user.save();
             console.log(result)
     
-            return {...result._doc, 
+            return {
+                ...result._doc, 
                 password: null,
                 _id: result.id 
             };
@@ -40,33 +41,41 @@ Mutation:{
             throw err;
         }
     },
+    async login(parent, args) {
+      
+        try {
+            const { email, password } = args
+            
+            const user = await User.findOne({email});
+            if(!user) {
+                throw new Error('User tidak ada! ');
+            }
+        
+            const sama = await bcrypt.compare(password, user.password);
+            if(!sama) {
+                throw new Error('Password salah atau tidak sama!');
+            } 
+        
+            const token = jwt.sign({userId: user.id, email: user.email}, 'somesupersecretkey', {
+                expiresIn: '1h'
+                
+            });
+            
+           return {
+               userId:user.id, 
+               token: token, 
+               tokenExpiration: 1
+           }
+        } catch(err) {
+            throw new Error(err.message)
+        }
+        
+    },
 },
 
 
 Query: {
-    async login({email, password}) {
-        const user = await User.findOne({email: email});
-        if(!user) {
-            throw new Error('User tidak ada! ');
-        }
-    
-        const sama = await bcrypt.compare(password, user.password);
-        if(!sama) {
-            throw new Error('Password salah atau tidak sama!');
-        } 
-    
-        const token = jwt.sign({userId: user.id, email: user.email}, 'somesupersecretkey', {
-            expiresIn: '1h'
-            
-        });
-        
-        return {
-            
-            userId: user.id,
-            token: token,
-            tokenExpiration: 1
-        }
-    },
+   
     async auth({token}) {
         try {
             var user = jwt.verify(token, 'somesupersecretkey');

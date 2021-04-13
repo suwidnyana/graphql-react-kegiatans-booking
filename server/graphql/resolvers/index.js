@@ -8,4 +8,12 @@ const rootResolver = {
     ...eventResolver
 };
 
-module.exports = rootResolver;
+module.exports = {
+    Query: {
+        ...eventResolver.Query
+      },
+    Mutation: {
+        ...authResolver.Mutation,
+        
+      },
+}

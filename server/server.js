@@ -6,9 +6,9 @@ const app = express()
 const isAuth = require('./middleware/is-auth')
 
 
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer, PubSub } = require('apollo-server');
 
-
+const pubsub = new PubSub();
 
 
 //grapqhl
@@ -46,8 +46,8 @@ app.use(isAuth);
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  playground: true
-  
+  context: ({ req }) => ({ req, pubsub }),
+  playground: true,
 });
 
 // ----------------------------------
@@ -66,10 +66,9 @@ const server = new ApolloServer({
 // ----------------------------------
 // Express server
 // ----------------------------------
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 4000
 
-server.listen(port, () => 
-console.log(`Server started on port ${port}`));
+server.listen(port, () => console.log(`Server started on port ${port}`));
 
 
 

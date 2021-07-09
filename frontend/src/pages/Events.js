@@ -1,5 +1,5 @@
 import React, {useContext,useState, useEffect, createRef} from 'react'
-import { useQuery, gql, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 
 import './Events.css';
 

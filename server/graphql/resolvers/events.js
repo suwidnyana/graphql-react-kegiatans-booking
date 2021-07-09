@@ -1,113 +1,107 @@
-const { dateToString } = require('../../helpers/date')
-const bcrypt = require("bcrypt")
+const { dateToString } = require("../../helpers/date");
+const bcrypt = require("bcrypt");
 
-
-const Event = require("../../models/event")
-const User = require("../../models/user")
-const { transformEvent } = require("./merge")
-
+const Event = require("../../models/event");
+const User = require("../../models/user");
+const checkAuth = require("../../middleware/is-auth");
+const { transformEvent } = require("./merge");
 
 module.exports = {
-    Query: {
-        async kegiatans() {
-            try {
-                const kegiatans = await Event.find()
-                 return kegiatans.map(test => {
-                        return transformEvent(test);
-                 });
-            } catch (error) {
-                throw error;
-            }
-        }
-    },
-    // kegiatans : async () => {   //query  
-    //     //resolver 
-    //     try {
-    //         const kegiatans = await Event.find()
-    //         return kegiatans.map(kegiatan => {
-    //             return transformEvent(kegiatan);
-    //         });
-    //     } catch(err) {
-    //         throw err;
-           
-    //     }
-    // },
-    
-    Mutation: {
-        async buatEvent(args, req) {
-   
-            if(!req.isAuth) {
-                throw new Error('Unauthenticated!');
-            }
-        const event = new Event({
-            
-            judul : args.eventInput.judul,
-            deskripsi : args.eventInput.deskripsi,
-             harga : +args.eventInput.harga,
-             date : new Date(args.eventInput.date),
-             creator : req.userId
+  Query: {
+    async kegiatans() {
+      try {
+        const kegiatans = await Event.find();
+        return kegiatans.map(() => {
+          return transformEvent();
         });
-        let createdEvent;
-        try {
-            const result = await  event.save()
-            createdEvent = transformEvent(result);
-            const creator = await User.findById(req.userId)
-            console.log(result)
-        
-        
-            if (!creator) {
-                throw new Error('User tidak ditemukan.');
-            }
-            creator.createdEvents.push(event);
-           
-            await creator.save();
-        
-           return createdEvent;
-        } 
-        catch(err)  {
-            console.log(err)
-            throw err;
+      } catch (error) {
+        throw error;
+      }
+    },
+  },
+  // kegiatans : async () => {   //query
+  //     //resolver
+  //     try {
+  //         const kegiatans = await Event.find()
+  //         return kegiatans.map(kegiatan => {
+  //             return transformEvent(kegiatan);
+  //         });
+  //     } catch(err) {
+  //         throw err;
+
+  //     }
+  // },
+
+  Mutation: {
+    async buatEvent(
+      _,
+      { eventInput: { judul, deskripsi, harga, date }, context }
+    ) {
+      const creator = checkAuth(context);
+
+      // if (!creator) {
+      //   throw new Error("Unauthenticated!");
+      // }
+      const event = new Event({
+        judul: judul,
+        deskripsi: deskripsi,
+        harga: +harga,
+        date: new Date(date),
+        creator: creator,
+      });
+      // let createdEvent;
+      try {
+        const result = await event.save();
+        const createdEvent = transformEvent(result);
+        const creator = await User.findById("5f6453bb9235a82d04154cd8");
+        console.log(result);
+
+        if (!creator) {
+          throw new Error("User tidak ditemukan.");
         }
-        }
+        creator.createdEvents.push(event);
 
+        await creator.save();
 
-    }
+        return createdEvent;
+      } catch (err) {
+        console.log(err);
+        throw err;
+      }
+    },
 
-    // buatEvent: async (args, req) => {  //mutation proses
-        
-    //     if(!req.isAuth) {
-    //         throw new Error('Unauthenticated!');
-    //     }
-    // const event = new Event({
-        
-    //     judul : args.eventInput.judul,
-    //     deskripsi : args.eventInput.deskripsi,
-    //      harga : +args.eventInput.harga,
-    //      date : new Date(args.eventInput.date),
-    //      creator : req.userId
-    // });
-    // let createdEvent;
-    // try {
-    //     const result = await  event.save()
+    // buatEvent: async (args, req) => {
+    //   //mutation proses
+
+    //   if (!req.isAuth) {
+    //     throw new Error("Unauthenticated!");
+    //   }
+    //   const event = new Event({
+    //     judul: args.eventInput.judul,
+    //     deskripsi: args.eventInput.deskripsi,
+    //     harga: +args.eventInput.harga,
+    //     date: new Date(args.eventInput.date),
+    //     creator: req.userId,
+    //   });
+    //   let createdEvent;
+    //   try {
+    //     const result = await event.save();
     //     createdEvent = transformEvent(result);
-    //     const creator = await User.findById(req.userId)
-    //     console.log(result)
-    
-    
+    //     const creator = await User.findById(req.userId);
+    //     console.log(result);
+
     //     if (!creator) {
-    //         throw new Error('User tidak ditemukan.');
+    //       throw new Error("User tidak ditemukan.");
     //     }
     //     creator.createdEvents.push(event);
-       
+
     //     await creator.save();
-    
-    //    return createdEvent;
-    // } 
-    // catch(err)  {
-    //     console.log(err)
+
+    //     return createdEvent;
+    //   } catch (err) {
+    //     console.log(err);
     //     throw err;
-    // }
-    // }
-    
-   
-    };
+    //   }
+    // },
+  },
+};

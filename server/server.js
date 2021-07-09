@@ -1,29 +1,22 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const graphqlHttp = require('express-graphql')
-const app = express()
-const isAuth = require('./middleware/is-auth')
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const graphqlHttp = require("express-graphql");
+const app = express();
+const isAuth = require("./middleware/is-auth");
 
-
-const { ApolloServer, PubSub } = require('apollo-server');
-
-const pubsub = new PubSub();
-
+const { ApolloServer } = require("apollo-server");
 
 //grapqhl
-const typeDefs  = require('./graphql/schema/index')
-const resolvers = require('./graphql/resolvers/index')
+const typeDefs = require("./graphql/schema/index");
+const resolvers = require("./graphql/resolvers/index");
 
 //connect Database
-const dotenv = require('dotenv')
+const dotenv = require("dotenv");
 
-dotenv.config({path: './config/config.env'})
-const connectDB = require('./config/db');
+dotenv.config({ path: "./config/config.env" });
+const connectDB = require("./config/db");
 connectDB();
-
-
-
 
 // ----------------------------------
 // Express configuration
@@ -31,44 +24,38 @@ connectDB();
 app.use(bodyParser.json());
 app.use(cors());
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    if (req.method === 'OPTIONS') {
-      return res.sendStatus(200);
-    }
-    next();
-  });
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use(isAuth);
-
-
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => ({ req, pubsub }),
   playground: true,
 });
+
+// server.applyMiddleware(isAuth);
 
 // ----------------------------------
 // API Routes
 // ----------------------------------
-// app.use('/graphql', 
+// app.use('/graphql',
 //            graphqlHttp({
 //             schema: graphQlSchema,
-//             rootValue: graphQlResolver, 
+//             rootValue: graphQlResolver,
 //             graphiql: true
 // }));
-
-
-
 
 // ----------------------------------
 // Express server
 // ----------------------------------
-const port = process.env.PORT || 4000
+const port = process.env.PORT || 4000;
 
 server.listen(port, () => console.log(`Server started on port ${port}`));
-
-
-

@@ -5,7 +5,7 @@ import BookingChart from '../components/Bookings/BookingChart/BookingChart'
 import BookingsControls from '../components/Bookings/BookingsControls/BookingsControls'
 
 import {AuthContext} from '../context/auth-context';
-import { useQuery,gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {getBookingsQuery} from '../queries/index'
 
 

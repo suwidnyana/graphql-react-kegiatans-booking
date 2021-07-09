@@ -31,7 +31,7 @@ const AuthPage = () => {
 
       let requestBody = {
           query: `
-            query login($email: String!, $password: String!) {
+            mutation login($email: String!, $password: String!) {
               login(email: $email, password: $password) {
                 userId
                 token

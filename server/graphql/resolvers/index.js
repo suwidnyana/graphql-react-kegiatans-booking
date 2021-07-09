@@ -1,19 +1,15 @@
-const eventResolver = require('./events');
-const bookingResolver = require('./booking');
-const authResolver = require('./auth');
-
-const rootResolver = {
-    ...authResolver,
-    ...bookingResolver,
-    ...eventResolver
-};
+const eventResolver = require("./events");
+const bookingResolver = require("./booking");
+const authResolver = require("./auth");
 
 module.exports = {
-    Query: {
-        ...eventResolver.Query
-      },
-    Mutation: {
-        ...authResolver.Mutation,
-        
-      },
-}
+  Query: {
+    ...eventResolver.Query,
+    ...bookingResolver.Query,
+  },
+  Mutation: {
+    ...authResolver.Mutation,
+    ...eventResolver.Mutation,
+    ...bookingResolver.Mutation,
+  },
+};

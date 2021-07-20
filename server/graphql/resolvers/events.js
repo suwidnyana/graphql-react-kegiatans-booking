@@ -11,8 +11,8 @@ module.exports = {
     async kegiatans() {
       try {
         const kegiatans = await Event.find();
-        return kegiatans.map(() => {
-          return transformEvent();
+        return kegiatans.map((e) => {
+          return transformEvent(e);
         });
       } catch (error) {
         throw error;

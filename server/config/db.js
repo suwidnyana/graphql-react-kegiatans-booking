@@ -9,8 +9,9 @@ const connectDB = async () => {
       useFindAndModify: false
     });
 
-    console.log('MongoDB connected');
+    console.log(`MongoDB connected: ${process.env.ATLAS_URI}`);
   } catch (error) {
+    console.log(process.env.ATLAS_URI, error);
     console.log(`Error connecting to DB: ${error.message}`);
     process.exit(1);
   }

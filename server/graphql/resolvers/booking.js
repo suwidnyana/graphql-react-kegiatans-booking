@@ -3,15 +3,20 @@ const Booking = require("../../models/booking");
 const { dateToString } = require("../../helpers/date");
 const { transformBooking, transformEvent } = require("../resolvers/merge");
 const Event = require("../../models/event");
+const checkAuth = require("../../middleware/is-auth");
 
 module.exports = {
   Query: {
-    async bookings() {
+    async bookings(parent, args, context) {
+      const auth = checkAuth(context);
       // if(!req.isAuth) {
       //     throw new Error('Unauthenticated!')
       // }
       try {
-        const bookings = await Booking.find({ user: req.userId });
+        const bookings = await Booking.find({ user: auth.userId })
+          .populate('user')
+          .populate('event');
+
         return bookings.map((booking) => {
           return transformBooking(booking);
         });
@@ -35,19 +40,19 @@ module.exports = {
   //     }
   // },
   Mutation: {
-    async bookKegiatan() {
-      if (!req.isAuth) {
-        throw new Error("Unauthenticated!");
-      }
-
+    async bookKegiatan(_, args, context) {
+      const auth = checkAuth(context);
       const fetchedEvent = await Event.findOne({ _id: args.eventId });
 
+      if (!fetchedEvent) {
+        throw new Error('Event cannot be found');
+      }
+
       const booking = new Booking({
-        user: req.userId,
-        event: fetchedEvent,
+        user: auth.userId,
+        event: args.eventId,
       });
 
-      console.log(booking);
       const hasil = await booking.save();
       return transformBooking(hasil);
     },

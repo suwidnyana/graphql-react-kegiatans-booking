@@ -10,7 +10,7 @@ module.exports = {
   Query: {
     async kegiatans() {
       try {
-        const kegiatans = await Event.find();
+        const kegiatans = await Event.find().populate('creator');
         return kegiatans.map((e) => {
           return transformEvent(e);
         });
@@ -33,32 +33,26 @@ module.exports = {
   // },
 
   Mutation: {
-    async buatEvent(
-      _,
-      { eventInput: { judul, deskripsi, harga, date }, context }
-    ) {
-      const creator = checkAuth(context);
+    async buatEvent(_, { eventInput: { judul, deskripsi, harga, date } }, context) {
+      const auth = checkAuth(context);
+      const creator = await User.findById(auth.userId);
 
-      // if (!creator) {
-      //   throw new Error("Unauthenticated!");
-      // }
+      if (!creator) {
+        throw new Error("User tidak ditemukan.");
+      }
+
       const event = new Event({
         judul: judul,
         deskripsi: deskripsi,
         harga: +harga,
         date: new Date(date),
-        creator: creator,
+        creator: creator._id,
       });
-      // let createdEvent;
+
       try {
         const result = await event.save();
         const createdEvent = transformEvent(result);
-        const creator = await User.findById("5f6453bb9235a82d04154cd8");
-        console.log(result);
 
-        if (!creator) {
-          throw new Error("User tidak ditemukan.");
-        }
         creator.createdEvents.push(event);
 
         await creator.save();

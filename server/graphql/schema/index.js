@@ -12,8 +12,8 @@ const typeDefs = gql`
 
   type Booking {
     _id: ID!
-    event: [Kegiatan]!
-    user: [User]!
+    event: Kegiatan!
+    user: User!
     createdAt: String!
     updatedAt: String!
   }

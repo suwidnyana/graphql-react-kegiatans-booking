@@ -12,7 +12,7 @@ const eventSchema = new Schema({
         type: String,
         required: true
     },
-    harga: { 
+    harga: {
         type: Number,
         required: true
     },
@@ -20,11 +20,11 @@ const eventSchema = new Schema({
         type: Date,
         required: true
     },
-    creator : {
+    creator: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }
 
 });
 
-module.exports =  moongose.model('Event', eventSchema);
+module.exports = moongose.model('Event', eventSchema);

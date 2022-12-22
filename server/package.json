@@ -23,7 +23,7 @@
     "graphql": "^14.7.0",
     "graphql-iso-date": "^3.6.1",
     "graphql-resolvers": "^0.4.2",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "5.11.15",
     "react": "^16.13.1",
     "react-chartjs": "^1.2.0",
